@@ -26,144 +26,132 @@ $prob_full = 50;
 // you'll need to set a different counter for each image
 // to prevent the caching of the image (or else all images will be the same)
 $counter = $_GET['counter'];
-	
-	$colore = preg_replace(' /[^0-9A-Fa-f]/ ', '', $colore); // Gets a proper hex string
-    if (strlen($colore) == 6) { //If a proper hex code, convert using bitwise operation. No overhead... faster
-        $coloreVal = hexdec($colore);
-        $coloreR = 0xFF & ($coloreVal >> 0x10);
-        $coloreG = 0xFF & ($coloreVal >> 0x8);
-        $coloreB = 0xFF & $coloreVal;
-    } if (strlen($colore) == 3) { //if shorthand notation, need some string manipulations
-        $coloreR = hexdec(str_repeat(substr($colore, 0, 1), 2));
-        $coloreG = hexdec(str_repeat(substr($colore, 1, 1), 2));
-        $coloreB = hexdec(str_repeat(substr($colore, 2, 1), 2));
-    }
 
-	$sfondo = preg_replace("/[^0-9A-Fa-f]/", '', $sfondo); // Gets a proper hex string
-	if (strlen($sfondo) == 6) { //If a proper hex code, convert using bitwise operation. No overhead... faster
-		$sfondoVal = hexdec($sfondo);
-		$sfondoR = 0xFF & ($sfondoVal >> 0x10);
-		$sfondoG = 0xFF & ($sfondoVal >> 0x8);
-		$sfondoB = 0xFF & $sfondoVal;
-	} if (strlen($sfondo) == 3) { //if shorthand notation, need some string manipulations
-		$sfondoR = hexdec(str_repeat(substr($sfondo, 0, 1), 2));
-		$sfondoG = hexdec(str_repeat(substr($sfondo, 1, 1), 2));
-		$sfondoB = hexdec(str_repeat(substr($sfondo, 2, 1), 2));
-	}
-//VARIABILI 
-/*
-$altezza = 1280;
-$larghezza = 256;
-$pixelsize = 8; //deve essere un divisore sia dell'altezza che della larghezza
-$ygap = 0;
-$ystart = 0;
-$xstart = 0;
+// parse the colors and get RGB values
+$color = preg_replace(' /[^0-9A-Fa-f]/ ', '', $color); // Gets a proper hex string
+if (strlen($color) == 6) { //If a proper hex code, convert using bitwise operation. No overhead... faster
+    $colorVal = hexdec($color);
+    $colorR = 0xFF & ($colorVal >> 0x10);
+    $colorG = 0xFF & ($colorVal >> 0x8);
+    $colorB = 0xFF & $colorVal;
+} if (strlen($color) == 3) { //if shorthand notation, need some string manipulations
+    $colorR = hexdec(str_repeat(substr($color, 0, 1), 2));
+    $colorG = hexdec(str_repeat(substr($color, 1, 1), 2));
+    $colorB = hexdec(str_repeat(substr($color, 2, 1), 2));
+}
+$background = preg_replace("/[^0-9A-Fa-f]/", '', $background); // Gets a proper hex string
+if (strlen($background) == 6) { //If a proper hex code, convert using bitwise operation. No overhead... faster
+	$backgroundVal = hexdec($background);
+	$backgroundR = 0xFF & ($backgroundVal >> 0x10);
+	$backgroundG = 0xFF & ($backgroundVal >> 0x8);
+	$backgroundB = 0xFF & $backgroundVal;
+} if (strlen($background) == 3) { //if shorthand notation, need some string manipulations
+	$backgroundR = hexdec(str_repeat(substr($background, 0, 1), 2));
+	$backgroundG = hexdec(str_repeat(substr($background, 1, 1), 2));
+	$backgroundB = hexdec(str_repeat(substr($background, 2, 1), 2));
+}
 
-$probvuoto = 50;
-$probpieno = 60;
-*/
-//random seed
-
+// set a random seed for the default PNRG
 mt_srand();
-//CREA "CANVAS"
-$img = imagecreatetruecolor($larghezza, $altezza);
-//crea sfondo
-imagefilledrectangle($img, 0, 0, $larghezza, $altezza, $sfondo0);
-//COLORS
 
-if($sfondoR<20){
-	$sfondoR1=$sfondoR+20;
-	$sfondoR2=$sfondoR+40;
-}
-if($sfondoR>235){
-	$sfondoR1=$sfondoR-20;
-	$sfondoR2=$sfondoR-40;
-}
-if($sfondoR>20 & $sfondoR<235){
-	$sfondoR1=$sfondoR-20;
-	$sfondoR2=$sfondoR+20;
-}
+// create the "canvas"
+$img = imagecreatetruecolor($width, $height);
 
-if($sfondoG<20){
-	$sfondoG1=$sfondoG+20;
-	$sfondoG2=$sfondoG+40;
+// create different shades of colors
+if($backgroundR<20){
+	$backgroundR1=$backgroundR+20;
+	$backgroundR2=$backgroundR+40;
 }
-if($sfondoR>235){
-	$sfondoG1=$sfondoG-20;
-	$sfondoG2=$sfondoG-40;
+if($backgroundR>235){
+	$backgroundR1=$backgroundR-20;
+	$backgroundR2=$backgroundR-40;
 }
-if($sfondoG>20 & $sfondoG<235){
-	$sfondoG1=$sfondoG-20;
-	$sfondoG2=$sfondoG+20;
+if($backgroundR>20 & $backgroundR<235){
+	$backgroundR1=$backgroundR-20;
+	$backgroundR2=$backgroundR+20;
 }
 
-if($sfondoB<20){
-	$sfondoB1=$sfondoB+20;
-	$sfondoB2=$sfondoB+40;
+if($backgroundG<20){
+	$backgroundG1=$backgroundG+20;
+	$backgroundG2=$backgroundG+40;
 }
-if($sfondoB>235){
-	$sfondoB1=$sfondoB-20;
-	$sfondoB2=$sfondoB-40;
+if($backgroundR>235){
+	$backgroundG1=$backgroundG-20;
+	$backgroundG2=$backgroundG-40;
 }
-if($sfondoB>20 & $sfondoB<235){
-	$sfondoB1=$sfondoB-20;
-	$sfondoB2=$sfondoB+20;
+if($backgroundG>20 & $backgroundG<235){
+	$backgroundG1=$backgroundG-20;
+	$backgroundG2=$backgroundG+20;
 }
-$colore0 = imagecolorallocate($img,$coloreR,$coloreG,$coloreB);
-$sfondo0 = imagecolorallocate($img,$sfondoR,$sfondoG,$sfondoB);
 
-$sfondo1 = imagecolorallocate($img,$sfondoR1,$sfondoG1,$sfondoB1);
+if($backgroundB<20){
+	$backgroundB1=$backgroundB+20;
+	$backgroundB2=$backgroundB+40;
+}
+if($backgroundB>235){
+	$backgroundB1=$backgroundB-20;
+	$backgroundB2=$backgroundB-40;
+}
+if($backgroundB>20 & $backgroundB<235){
+	$backgroundB1=$backgroundB-20;
+	$backgroundB2=$backgroundB+20;
+}
 
-$sfondo2 = imagecolorallocate($img,$sfondoR2,$sfondoG2,$sfondoB2);
-//SFONDO
+// initialize the colors
+$color0 = imagecolorallocate($img,$colorR,$colorG,$colorB);
+$background0 = imagecolorallocate($img,$backgroundR,$backgroundG,$backgroundB);
+$background1 = imagecolorallocate($img,$backgroundR1,$backgroundG1,$backgroundB1);
+$background2 = imagecolorallocate($img,$backgroundR2,$backgroundG2,$backgroundB2);
 
-//COSTRUZIONE STRINGA 0
-$i=0;
-for($y = 0; $y < $larghezza; $y++){
-	for($x = 0; $x < $altezza; $x++){
+// fill the background with the background color
+imagefilledrectangle($img, 0, 0, $width, $height, $background0);
+
+// every char of the string $s is a "pixel" of the image
+$s='';
+for($y = 0; $y < $width; $y++){
+	for($x = 0; $x < $height; $x++){
 		$s.='0';
-		$i++;
 	}
 }
-//GENERAZIONE IMMAGINE SIMMETRICA
+
+// symmetric image generation
 $i=0;
-for($y = $ystart; $y < $altezza/$pixelsize; $y++){
-	for($x = $xstart; $x < $larghezza/($pixelsize*2); $x++){
+$s[0]=mt_rand(0,1);
+for($y = $ystart; $y < $height/$pixelsize; $y++){
+	for($x = $xstart; $x < $width/($pixelsize*2); $x++){
 		
-		$r=mt_rand(0,100);
-		
-		$f=$larghezza/($pixelsize)-$x-1;
-		
-		
+		$f=$width/($pixelsize)-$x-1;
 		
 		$diff=intval(mt_rand(0,2));
-	
-		
+
 		if($s[$i]=='1'){
-				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $colore0);
-				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $colore0);
+				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $color0);
+				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $color0);
 		}
 		if($s[$i]=='0'){
 			if($diff==0){
-				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $sfondo0);
-				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $sfondo0);
+				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $background0);
+				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $background0);
 			}
 			if($diff==1){
-				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $sfondo1);
-				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $sfondo1);
+				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $background1);
+				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $background1);
 			}
 			if($diff==2){
-				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $sfondo2);
-				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $sfondo2);
+				imagefilledrectangle($img, $pixelsize*($x), $pixelsize*($y), $pixelsize+$pixelsize*($x), $pixelsize-1+$pixelsize*($y), $background2);
+				imagefilledrectangle($img, $pixelsize*($f), $pixelsize*($y), $pixelsize+$pixelsize*($f), $pixelsize-1+$pixelsize*($y), $background2);
 			}
 		}
-		if($s[$i]=='0' && $r<$probvuoto)
+
+		// randomly set if the next "pixel" is empty or full
+		$r=mt_rand(1,100);
+		if($s[$i]=='0' && $r<$prob_empty)
 			$s[++$i]='1';
-		if($s[$i]=='0' && $r>$probvuoto)
+		if($s[$i]=='0' && $r>$prob_empty)
 			$s[++$i]='0';
-		if($s[$i]==1 && $r<$probpieno)
+		if($s[$i]==1 && $r<$prob_full)
 			$s[++$i]='1';
-		if($s[$i]==1 && $r>$probpieno)
+		if($s[$i]==1 && $r>$prob_full)
 			$s[++$i]='0';
 	}
 	$y = $y+$ygap;
